@@ -1,5 +1,6 @@
 package edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.data;
 
+import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.Meal;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.User;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.PasswordUtil;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.Pet;
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -948,9 +950,175 @@ public class DataManager {
      * Writes the recipe CSV to a temporary file before replacing the original.
      */
     private void writeRecipeLines(List<String> lines) throws IOException {
-        Path target = Path.of("data", "recipes.csv").toAbsolutePath();
+        writeCsvLines(Path.of("data", "recipes.csv"), lines);
+    }
+
+    /**
+     * Loads the meals logged for one pet on one date.
+     *
+     * @param petId the ID of the pet whose meals to load
+     * @param date the day to load meals for
+     * @return the matching meals in the order they were logged
+     * @throws IOException if the file cannot be read or contains an invalid record
+     */
+    public List<Meal> loadMealsForPet(String petId, LocalDate date)
+            throws IOException {
+        List<String> lines = readMealLines();
+        List<Meal> meals = new ArrayList<>();
+
+        for (int i = 1; i < lines.size(); i++) {
+            if (lines.get(i).isBlank()) {
+                continue;
+            }
+
+            String[] fields = parseCsvLine(lines.get(i));
+
+            // Only include this pet's meals for the requested day.
+            if (!fields[1].trim().equals(petId)
+                    || !fields[2].trim().equals(date.toString())) {
+                continue;
+            }
+
+            try {
+                meals.add(new Meal(
+                        fields[0].trim(),
+                        fields[1].trim(),
+                        LocalDate.parse(fields[2].trim()),
+                        fields[3].trim(),
+                        fields[4].trim(),
+                        Integer.parseInt(fields[5].trim()),
+                        Integer.parseInt(fields[6].trim())));
+            } catch (NumberFormatException | java.time.format.DateTimeParseException exception) {
+                throw new IOException(
+                        "Invalid value in meal CSV at row " + (i + 1), exception);
+            }
+        }
+
+        return meals;
+    }
+
+    /**
+     * Adds a meal to the meal CSV, creating the file if it does not exist yet.
+     *
+     * @param meal the meal to save
+     * @throws IOException if the file is invalid or the meal cannot be saved
+     */
+    public void addMeal(Meal meal) throws IOException {
+        List<String> lines = readMealLines();
+
+        // Prevent two meals from sharing the same ID.
+        if (findMealRow(lines, meal.getMealId()) != -1) {
+            throw new IOException("That meal ID already exists.");
+        }
+
+        // Store values in the same order as the CSV header.
+        lines.add(String.join(",",
+                csvField(meal.getMealId()),
+                csvField(meal.getPetId()),
+                meal.getDate().toString(),
+                csvField(meal.getRecipeId()),
+                csvField(meal.getRecipeName()),
+                Integer.toString(meal.getGrams()),
+                Integer.toString(meal.getCalories())));
+
+        writeCsvLines(Path.of("data", "meals.csv"), lines);
+    }
+
+    /**
+     * Removes a logged meal.
+     * Checks both the meal ID and pet ID before deleting the record.
+     *
+     * @param mealId the ID of the meal to remove
+     * @param petId the ID of the pet the meal belongs to
+     * @throws IOException if the file is invalid or deletion fails
+     */
+    public void removeMeal(String mealId, String petId) throws IOException {
+        List<String> lines = readMealLines();
+        int matchingRow = findMealRow(lines, mealId);
+
+        if (matchingRow == -1) {
+            throw new IOException("The selected meal could not be found.");
+        }
+
+        // Prevent removing a meal that belongs to a different pet.
+        if (!parseCsvLine(lines.get(matchingRow))[1].trim().equals(petId)) {
+            throw new IOException("The meal's pet does not match.");
+        }
+
+        lines.remove(matchingRow);
+        writeCsvLines(Path.of("data", "meals.csv"), lines);
+    }
+
+    /**
+     * Reads the meal CSV and checks its header and column counts.
+     * Returns only the header when no meals have been logged yet.
+     */
+    private List<String> readMealLines() throws IOException {
+        Path mealsFile = Path.of("data", "meals.csv");
+        String expectedHeader =
+                "Meal ID,Pet ID,Date,Recipe ID,Recipe Name,Grams,Calories";
+
+        // A fresh clone may not have a meal file until the first meal is saved.
+        if (!Files.exists(mealsFile)) {
+            List<String> lines = new ArrayList<>();
+            lines.add(expectedHeader);
+            return lines;
+        }
+
+        List<String> lines = new ArrayList<>(Files.readAllLines(
+                mealsFile, StandardCharsets.UTF_8));
+
+        if (lines.isEmpty()
+                || !lines.get(0).replaceFirst("^﻿", "").equals(expectedHeader)) {
+            throw new IOException("The meal CSV has an unexpected header.");
+        }
+
+        for (int i = 1; i < lines.size(); i++) {
+            if (lines.get(i).isBlank()) {
+                continue;
+            }
+
+            if (parseCsvLine(lines.get(i)).length != 7) {
+                throw new IOException(
+                        "Invalid meal record at row " + (i + 1));
+            }
+        }
+
+        return lines;
+    }
+
+    /**
+     * Finds the line index of a meal ID, or -1 when it is not present.
+     */
+    private int findMealRow(List<String> lines, String mealId)
+            throws IOException {
+        int matchingRow = -1;
+
+        for (int i = 1; i < lines.size(); i++) {
+            if (lines.get(i).isBlank()) {
+                continue;
+            }
+
+            if (parseCsvLine(lines.get(i))[0].trim().equals(mealId)) {
+                if (matchingRow != -1) {
+                    throw new IOException("Duplicate meal ID in the CSV.");
+                }
+
+                matchingRow = i;
+            }
+        }
+
+        return matchingRow;
+    }
+
+    /**
+     * Writes a CSV to a temporary file before replacing the original,
+     * so a failed save never leaves a half-written file behind.
+     */
+    private void writeCsvLines(Path file, List<String> lines) throws IOException {
+        Path target = file.toAbsolutePath();
         Path temporaryFile = Files.createTempFile(
-                target.getParent(), "recipes-", ".tmp");
+                target.getParent(), "data-", ".tmp");
 
         try {
             Files.write(temporaryFile, lines, StandardCharsets.UTF_8);
