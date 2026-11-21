@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Log a meal from the recipe library for the selected pet. -->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.controller.LogMealController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #FAF5E9;">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="24" right="32" bottom="24" left="32"/>
+            </padding>
+
+            <Label text="BowlBuddy"
+                   style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    style="-fx-background-color: transparent;">
+            <content>
+                <VBox spacing="16"
+                      style="-fx-background-color: #FAF5E9;">
+                    <padding>
+                        <Insets top="20" right="48" bottom="40" left="48"/>
+                    </padding>
+
+                    <!-- LogMealController adds the pet's name to this title. -->
+                    <Label fx:id="titleLabel"
+                           text="Log a Meal"
+                           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+
+                    <VBox spacing="8" maxWidth="500">
+                        <Label text="Recipe"/>
+                        <!-- DataManager supplies the recipes shown in this list. -->
+                        <ComboBox fx:id="recipeComboBox"
+                                  promptText="Choose a recipe"
+                                  maxWidth="Infinity"/>
+
+                        <Label text="Portion (grams)"/>
+                        <TextField fx:id="gramsField"
+                                   promptText="120"/>
+
+                        <Label text="Date"/>
+                        <DatePicker fx:id="datePicker"
+                                    maxWidth="Infinity"/>
+
+                        <!-- Updates as the recipe or portion changes. -->
+                        <Label fx:id="caloriesLabel"
+                               text="Calories: choose a recipe and portion"
+                               style="-fx-font-weight: bold;"/>
+
+                        <HBox spacing="12">
+                            <!-- Save the meal using LogMealController. -->
+                            <Button text="Save Meal"
+                                    onAction="#handleSaveMeal"
+                                    style="-fx-background-color: #337AB7; -fx-text-fill: white; -fx-font-size: 16px;"/>
+
+                            <!-- Return to the pet profile without saving. -->
+                            <Button text="Cancel"
+                                    onAction="#handleCancel"/>
+                        </HBox>
+
+                        <Label fx:id="messageLabel"
+                               wrapText="true"
+                               style="-fx-text-fill: #B42318;"/>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

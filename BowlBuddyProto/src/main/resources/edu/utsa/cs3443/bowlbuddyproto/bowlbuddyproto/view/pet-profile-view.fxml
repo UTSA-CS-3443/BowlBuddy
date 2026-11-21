@@ -22,6 +22,11 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- Open the Log Meal form for the selected pet. -->
+            <Button text="Log Meal"
+                    onAction="#handleLogMeal"
+                    style="-fx-background-color: #284D3B; -fx-text-fill: white;"/>
+
             <!-- Open the edit form for the selected pet. -->
             <Button text="Edit Pet"
                     onAction="#handleEditPet"
@@ -106,6 +111,29 @@
 
                     <Label fx:id="notesLabel"
                            wrapText="true"/>
+
+                    <Separator/>
+
+                    <Label text="Today's Meals"
+                           style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                    <!-- PetProfileController compares today's calories to the goal. -->
+                    <Label fx:id="caloriesTodayLabel"
+                           style="-fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+
+                    <!-- DataManager supplies the meals logged for this pet today. -->
+                    <ListView fx:id="mealListView"
+                              prefHeight="180"
+                              maxWidth="650">
+                        <placeholder>
+                            <Label text="No meals logged today."/>
+                        </placeholder>
+                    </ListView>
+
+                    <!-- Confirm before deleting the highlighted meal's CSV record. -->
+                    <Button text="Remove Meal"
+                            onAction="#handleRemoveMeal"
+                            style="-fx-background-color: #B42318; -fx-text-fill: white;"/>
 
                     <Label fx:id="messageLabel"
                            wrapText="true"
