@@ -42,8 +42,6 @@ BowlBuddy follows the Model–View–Controller pattern. `DataManager` handles C
 
 ## Planned Features
 
-- Add recipes to the library.
-- Log meals and portions.
 - Schedule feedings on a calendar.
 - Track calories against each pet’s daily goal.
 
