@@ -1,6 +1,6 @@
 # BowlBuddy
 
-BowlBuddy is a JavaFX desktop app for managing pet profiles and browsing feeding recipes. Team ByteMe built it for CS 3443 – Application Programming at UTSA.
+BowlBuddy is a JavaFX desktop app for managing pet profiles, browsing feeding recipes, logging meals, and tracking each pet's calories on a feeding calendar. Team ByteMe built it for CS 3443 – Application Programming at UTSA.
 
 ## Current Features
 
@@ -8,8 +8,11 @@ BowlBuddy is a JavaFX desktop app for managing pet profiles and browsing feeding
 - View and edit your account name and email.
 - View, add, edit, and remove pets linked to your account. Removing a pet requires confirmation.
 - View each pet’s breed, age, weight, daily calorie goal, feeding frequency, medication, and notes.
-- Browse the Recipe Library to see brands, calories per 100 g, tags, and instructions.
-- Save account and pet changes locally so they’re available after restarting the app.
+- Browse the Recipe Library to see brands, calories per 100 g, tags, and instructions. Add, edit, and delete recipes.
+- Log meals for a pet and see today’s meals and calorie total on the pet profile.
+- Track calories against each pet’s daily goal with a progress bar that turns red when the goal is exceeded.
+- Open a monthly feeding calendar from a pet’s profile. Each day shows its calorie total; click a day to see that day’s meals, and use Previous and Next to change months.
+- Save account, pet, recipe, and meal changes locally so they’re available after restarting the app.
 
 ## Run the App
 
@@ -37,13 +40,9 @@ Run those commands from the repository root. From the sign-in screen, use a demo
 | `BowlBuddyProto/data/users.csv` | Sample accounts and local account changes |
 | `BowlBuddyProto/data/pets.csv` | Pet profiles linked to their owners by user ID |
 | `BowlBuddyProto/data/recipes.csv` | Sample recipes used by the Recipe Library |
+| `BowlBuddyProto/data/meals.csv` | Logged meals linked to pets by pet ID, used by the pet profile and feeding calendar |
 
-BowlBuddy follows the Model–View–Controller pattern. `DataManager` handles CSV reads and writes. Each clone has its own local data; keep personal account information and local test registrations out of the public repository.
-
-## Planned Features
-
-- Schedule feedings on a calendar.
-- Track calories against each pet’s daily goal.
+BowlBuddy follows the Model–View–Controller pattern. `DataManager` handles CSV reads and writes. `FeedingCalendar` groups a pet’s meals by date for the calendar view. Each clone has its own local data; keep personal account information and local test registrations out of the public repository.
 
 ## Build Check
 
