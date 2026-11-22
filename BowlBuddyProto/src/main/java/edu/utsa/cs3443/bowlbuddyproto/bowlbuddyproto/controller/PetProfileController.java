@@ -87,7 +87,6 @@ public class PetProfileController {
         caloriesTodayLabel.setText(caloriesToday + " of "
                 + pet.getDailyCalorieGoal() + " kcal eaten today");
     }
-
     /**
      * Opens the Log Meal form for the pet selected in the current session.
      */
@@ -101,6 +100,22 @@ public class PetProfileController {
             petNameLabel.getScene().setRoot(logMealView);
         } catch (IOException exception) {
             messageLabel.setText("Unable to open the Log Meal form.");
+            exception.printStackTrace();
+        }
+    }
+    /**
+     * Opens the feeding calendar for the pet selected in the current session.
+     */
+    @FXML
+    private void handleOpenCalendar() {
+        try {
+            Parent calendarView = FXMLLoader.load(
+                    HelloApplication.class.getResource(
+                            "view/feeding-calendar-view.fxml"));
+
+            petNameLabel.getScene().setRoot(calendarView);
+        } catch (IOException exception) {
+            messageLabel.setText("Unable to open the feeding calendar.");
             exception.printStackTrace();
         }
     }

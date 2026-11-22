@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            fx:controller="edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.controller.FeedingCalendarController"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="1200"
+            prefHeight="800"
+            style="-fx-background-color: #FAF5E9;">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="24" right="32" bottom="24" left="32"/>
+            </padding>
+
+            <Label text="BowlBuddy"
+                   style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Back to Profile"
+                    onAction="#handleBackToProfile"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="40">
+            <padding>
+                <Insets top="10" right="48" bottom="40" left="48"/>
+            </padding>
+
+            <!-- Left side: month navigation and the calendar grid. -->
+            <VBox spacing="16">
+                <Label fx:id="petNameLabel"
+                       text="Feeding Calendar"
+                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="16">
+                    <Button text="Previous"
+                            onAction="#handlePreviousMonth"/>
+                    <Label fx:id="monthLabel"
+                           minWidth="200"
+                           alignment="CENTER"
+                           style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+                    <Button text="Next"
+                            onAction="#handleNextMonth"/>
+                </HBox>
+
+                <!-- FeedingCalendarController fills this with day buttons. -->
+                <GridPane fx:id="calendarGrid"
+                          hgap="6"
+                          vgap="6"/>
+
+                <Label text="Green = within goal    Red = over goal    White = no meals logged"
+                       style="-fx-text-fill: #555555;"/>
+            </VBox>
+
+            <!-- Right side: details for the selected day. -->
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label fx:id="selectedDayLabel"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+
+                <Label fx:id="dayTotalLabel"
+                       style="-fx-font-weight: bold;"/>
+
+                <ProgressBar fx:id="dayProgressBar"
+                             prefWidth="350"
+                             progress="0"/>
+
+                <ListView fx:id="dayMealListView"
+                          prefHeight="300"
+                          maxWidth="450">
+                    <placeholder>
+                        <Label text="No meals logged on this day."/>
+                    </placeholder>
+                </ListView>
+
+                <Label fx:id="messageLabel"
+                       wrapText="true"
+                       style="-fx-text-fill: #B42318;"/>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

@@ -27,6 +27,11 @@
                     onAction="#handleLogMeal"
                     style="-fx-background-color: #284D3B; -fx-text-fill: white;"/>
 
+            <!-- Open the monthly feeding calendar for the selected pet. -->
+            <Button text="Feeding Calendar"
+                    onAction="#handleOpenCalendar"
+                    style="-fx-background-color: #8A6D3B; -fx-text-fill: white;"/>
+
             <!-- Open the edit form for the selected pet. -->
             <Button text="Edit Pet"
                     onAction="#handleEditPet"
