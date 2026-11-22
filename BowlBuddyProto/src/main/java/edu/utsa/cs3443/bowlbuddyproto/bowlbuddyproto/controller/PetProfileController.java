@@ -5,6 +5,7 @@ import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.Meal;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.Pet;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.SessionManager;
 import edu.utsa.cs3443.bowlbuddyproto.bowlbuddyproto.model.User;
+import javafx.scene.control.ProgressBar;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +35,7 @@ public class PetProfileController {
     @FXML private Label medicationLabel;
     @FXML private Label notesLabel;
     @FXML private Label caloriesTodayLabel;
+    @FXML private ProgressBar calorieProgressBar;
     @FXML private ListView<Meal> mealListView;
     @FXML private Label messageLabel;
 
@@ -86,8 +88,15 @@ public class PetProfileController {
 
         caloriesTodayLabel.setText(caloriesToday + " of "
                 + pet.getDailyCalorieGoal() + " kcal eaten today");
-    }
+        // Fill the bar toward the daily goal and turn it red if exceeded.
+        int goal = pet.getDailyCalorieGoal();
+        double progress = goal > 0 ? (double) caloriesToday / goal : 0;
+        calorieProgressBar.setProgress(Math.min(progress, 1.0));
+        calorieProgressBar.setStyle(progress > 1.0
+                ? "-fx-accent: #B42318;"
+                : "-fx-accent: #284D3B;");
 
+    }
     /**
      * Opens the Log Meal form for the pet selected in the current session.
      */
@@ -101,6 +110,22 @@ public class PetProfileController {
             petNameLabel.getScene().setRoot(logMealView);
         } catch (IOException exception) {
             messageLabel.setText("Unable to open the Log Meal form.");
+            exception.printStackTrace();
+        }
+    }
+    /**
+     * Opens the feeding calendar for the pet selected in the current session.
+     */
+    @FXML
+    private void handleOpenCalendar() {
+        try {
+            Parent calendarView = FXMLLoader.load(
+                    HelloApplication.class.getResource(
+                            "view/feeding-calendar-view.fxml"));
+
+            petNameLabel.getScene().setRoot(calendarView);
+        } catch (IOException exception) {
+            messageLabel.setText("Unable to open the feeding calendar.");
             exception.printStackTrace();
         }
     }
