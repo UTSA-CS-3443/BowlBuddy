@@ -125,6 +125,10 @@
                     <!-- PetProfileController compares today's calories to the goal. -->
                     <Label fx:id="caloriesTodayLabel"
                            style="-fx-font-weight: bold; -fx-text-fill: #284D3B;"/>
+                    <!-- Fills toward the daily goal; turns red when the goal is exceeded. -->
+                    <ProgressBar fx:id="calorieProgressBar"
+                                 prefWidth="350"
+                                 progress="0"/>
 
                     <!-- DataManager supplies the meals logged for this pet today. -->
                     <ListView fx:id="mealListView"
